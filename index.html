@@ -554,13 +554,22 @@
       Number(input.value);
 
 
-    if (!Number.isFinite(value) || value < 1) {
+    if (!roundNumber || roundNumber < 1) {
 
-      message.textContent =
-        "Digite um multiplicador válido. Ex.: 2.50";
+  message.textContent =
+    "Digite o número da rodada.";
 
-      return;
-    }
+  return;
+}
+
+
+if (!value || value < 1) {
+
+  message.textContent =
+    "Digite um multiplicador válido. Ex.: 2.50";
+
+  return;
+}
 
 
     button.disabled = true;
@@ -573,8 +582,9 @@
       await supabaseClient
         .from("aviator_rounds")
         .insert({
-          multiplier: value
-        })
+  round_number: roundNumber,
+  multiplier: value
+})
         .select()
         .single();
 
@@ -603,7 +613,8 @@
 
 
     input.value = "";
-
+    
+roundInput.value = "";
 
     message.textContent =
       "Resultado salvo com sucesso!";
