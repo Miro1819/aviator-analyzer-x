@@ -489,8 +489,8 @@ function updateChart() {
   if (!canvas) return;
 
   const labels = multipliers.map(
-  value => value.toFixed(2) + "x"
-);
+    value => value.toFixed(2) + "x"
+  );
 
   if (roundsChart) {
     roundsChart.destroy();
@@ -503,14 +503,15 @@ function updateChart() {
       labels: labels,
 
       datasets: [{
-  label: "Multiplicador",
-  data: multipliers,
+        label: "Multiplicador",
+        data: multipliers,
 
-  borderWidth: 2,
-  tension: 0.3,
+        borderWidth: 2,
+        tension: 0.3,
 
-  pointRadius: 4
-}]
+        pointRadius: 4
+      }]
+    },
 
     options: {
       responsive: true,
