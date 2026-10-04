@@ -489,8 +489,8 @@ function updateChart() {
   if (!canvas) return;
 
   const labels = multipliers.map(
-    (_, index) => "Rodada " + (index + 1)
-  );
+  value => value.toFixed(2) + "x"
+);
 
   if (roundsChart) {
     roundsChart.destroy();
