@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Aviator Analyzer X</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     * {
@@ -21,7 +23,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: auto;
     }
 
@@ -96,8 +98,8 @@
 
     .analysis {
       text-align: center;
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 16px;
+      line-height: 1.8;
       margin-top: 10px;
     }
 
@@ -122,6 +124,40 @@
       font-size: 14px;
     }
 
+    .section-title {
+      margin-bottom: 15px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .mini-card {
+      background: #202943;
+      padding: 14px;
+      border-radius: 13px;
+      text-align: center;
+    }
+
+    .mini-card span {
+      display: block;
+      color: #9ca3af;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .mini-card strong {
+      font-size: 19px;
+    }
+
+    .chart-box {
+      position: relative;
+      width: 100%;
+      height: 320px;
+    }
+
     .warning {
       text-align: center;
       color: #fbbf24;
@@ -129,41 +165,93 @@
       margin-top: 20px;
       line-height: 1.5;
     }
+
+    .success {
+      color: #4ade80;
+    }
+
+    .danger {
+      color: #f87171;
+    }
+
+    .neutral {
+      color: #fbbf24;
+    }
+
+    @media (max-width: 500px) {
+
+      body {
+        padding: 12px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-box {
+        height: 270px;
+      }
+    }
   </style>
 </head>
 
 <body>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="card">
-  <h3>📈 Gráfico das Rodadas</h3>
-  <canvas id="roundsChart"></canvas>
-</div>
 <div class="container">
 
   <h1>✈️ Aviator Analyzer X</h1>
+
   <div class="subtitle">
-    Painel de análise estatística de resultados
+    Painel avançado de análise estatística
   </div>
 
-  <div class="card stats">
 
-    <div class="stat">
-      <span>Rodadas</span>
-      <strong id="rounds">0</strong>
-    </div>
+  <!-- ==========================================
+       RESUMO
+  =========================================== -->
 
-    <div class="stat">
-      <span>Média</span>
-      <strong id="average">0.00x</strong>
-    </div>
+  <div class="card">
 
-    <div class="stat">
-      <span>Maior</span>
-      <strong id="highest">0.00x</strong>
+    <div class="stats">
+
+      <div class="stat">
+        <span>Rodadas</span>
+        <strong id="rounds">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Média</span>
+        <strong id="average">0.00x</strong>
+      </div>
+
+      <div class="stat">
+        <span>Maior</span>
+        <strong id="highest">0.00x</strong>
+      </div>
+
     </div>
 
   </div>
+
+
+  <!-- ==========================================
+       GRÁFICO
+  =========================================== -->
+
+  <div class="card">
+
+    <h3 class="section-title">📈 Gráfico das Rodadas</h3>
+
+    <div class="chart-box">
+      <canvas id="roundsChart"></canvas>
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       ADICIONAR RESULTADO
+  =========================================== -->
 
   <div class="card">
 
@@ -184,7 +272,28 @@
     <div class="message" id="message"></div>
 
   </div>
-    <div class="card">
+
+
+  <!-- ==========================================
+       ANÁLISE PRINCIPAL
+  =========================================== -->
+
+  <div class="card">
+
+    <h3>📊 Análise</h3>
+
+    <div class="analysis" id="analysis">
+      Aguardando resultados...
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       DISTRIBUIÇÃO
+  =========================================== -->
+
+  <div class="card">
 
     <h3>📊 Distribuição dos resultados</h3>
 
@@ -205,10 +314,6 @@
         <strong id="rangeMedium">0</strong>
       </div>
 
-    </div>
-
-    <div class="stats" style="margin-top: 10px;">
-
       <div class="stat">
         <span>5.00x+</span>
         <strong id="rangeHigh">0</strong>
@@ -218,15 +323,105 @@
 
   </div>
 
+
+  <!-- ==========================================
+       SEQUÊNCIAS
+  =========================================== -->
+
   <div class="card">
 
-    <h3>Análise</h3>
+    <h3>🔥 Sequências</h3>
 
-    <div class="analysis" id="analysis">
-      Aguardando resultados...
+    <div class="mini-grid">
+
+      <div class="mini-card">
+        <span>Sequência atual abaixo de 2x</span>
+        <strong id="currentLowStreak">0</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Sequência atual 2x+</span>
+        <strong id="currentHighStreak">0</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Maior sequência abaixo de 2x</span>
+        <strong id="maxLowStreak">0</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Maior sequência 2x+</span>
+        <strong id="maxHighStreak">0</strong>
+      </div>
+
     </div>
 
   </div>
+
+
+  <!-- ==========================================
+       JANELAS DE ANÁLISE
+  =========================================== -->
+
+  <div class="card">
+
+    <h3>📈 Últimas rodadas</h3>
+
+    <div class="mini-grid">
+
+      <div class="mini-card">
+        <span>Média 5</span>
+        <strong id="window5">0.00x</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Média 10</span>
+        <strong id="window10">0.00x</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Média 20</span>
+        <strong id="window20">0.00x</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Média 50</span>
+        <strong id="window50">0.00x</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       VOLATILIDADE
+  =========================================== -->
+
+  <div class="card">
+
+    <h3>📉 Volatilidade</h3>
+
+    <div class="mini-grid">
+
+      <div class="mini-card">
+        <span>Desvio padrão</span>
+        <strong id="volatility">0.00</strong>
+      </div>
+
+      <div class="mini-card">
+        <span>Estado</span>
+        <strong id="volatilityStatus">Estável</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       HISTÓRICO
+  =========================================== -->
 
   <div class="card">
 
@@ -236,12 +431,14 @@
 
   </div>
 
+
   <div class="warning">
-    ⚠️ Esta ferramenta apresenta estatísticas dos resultados registrados.
+    ⚠️ Esta ferramenta analisa estatisticamente os resultados registrados.
     Ela não garante nem prevê o resultado da próxima rodada.
   </div>
 
 </div>
+
 
 <script>
 
@@ -256,13 +453,39 @@
     "sb_publishable_j8BlaYuO-CA3gQkdPlM8Zw_14pqLVkN";
 
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
 
   let multipliers = [];
+
+  let roundsChart = null;
+
+
+  // ==========================================
+  // FUNÇÕES AUXILIARES
+  // ==========================================
+
+  function getAverage(values) {
+
+    if (!values.length) {
+      return 0;
+    }
+
+    return values.reduce(
+      (sum, value) => sum + value,
+      0
+    ) / values.length;
+  }
+
+
+  function getWindow(size) {
+
+    return multipliers.slice(-size);
+  }
 
 
   // ==========================================
@@ -271,11 +494,14 @@
 
   async function loadRounds() {
 
-    const { data, error } = await supabaseClient
-      .from("aviator_rounds")
-      .select("id, multiplier, created_at")
-      .order("created_at", { ascending: false })
-      .limit(100);
+    const { data, error } =
+      await supabaseClient
+        .from("aviator_rounds")
+        .select("id, multiplier, created_at")
+        .order("created_at", {
+          ascending: false
+        })
+        .limit(100);
 
     if (error) {
 
@@ -287,9 +513,13 @@
       return;
     }
 
-    multipliers = data
-      .reverse()
-      .map(item => Number(item.multiplier));
+
+    multipliers =
+      (data || [])
+        .reverse()
+        .map(item => Number(item.multiplier))
+        .filter(value => Number.isFinite(value));
+
 
     updatePanel();
   }
@@ -310,10 +540,12 @@
     const message =
       document.getElementById("message");
 
-    const value = Number(input.value);
+
+    const value =
+      Number(input.value);
 
 
-    if (!value || value < 1) {
+    if (!Number.isFinite(value) || value < 1) {
 
       message.textContent =
         "Digite um multiplicador válido. Ex.: 2.50";
@@ -324,7 +556,8 @@
 
     button.disabled = true;
 
-    message.textContent = "Salvando...";
+    message.textContent =
+      "Salvando...";
 
 
     const { data, error } =
@@ -362,11 +595,13 @@
 
     input.value = "";
 
+
     message.textContent =
       "Resultado salvo com sucesso!";
 
 
     updatePanel();
+
 
     button.disabled = false;
   }
@@ -400,19 +635,18 @@
       document.getElementById("history").innerHTML =
         "";
 
+      updateDistribution();
+      updateStreaks();
+      updateWindows();
+      updateVolatility();
+      updateChart();
+
       return;
     }
 
 
-    const total =
-      multipliers.reduce(
-        (sum, value) => sum + value,
-        0
-      );
-
-
     const average =
-      total / rounds;
+      getAverage(multipliers);
 
 
     const highest =
@@ -428,8 +662,376 @@
 
 
     updateAnalysis();
+
+    updateDistribution();
+
+    updateStreaks();
+
+    updateWindows();
+
+    updateVolatility();
+
     updateChart();
 
+    updateHistory();
+  }
+
+
+  // ==========================================
+  // ANÁLISE PRINCIPAL
+  // ==========================================
+
+  function updateAnalysis() {
+
+    const analysis =
+      document.getElementById("analysis");
+
+
+    if (!multipliers.length) {
+
+      analysis.textContent =
+        "Aguardando resultados...";
+
+      return;
+    }
+
+
+    const last5 =
+      getWindow(5);
+
+    const last10 =
+      getWindow(10);
+
+    const last20 =
+      getWindow(20);
+
+
+    const average5 =
+      getAverage(last5);
+
+    const average10 =
+      getAverage(last10);
+
+    const average20 =
+      getAverage(last20);
+
+
+    const low20 =
+      last20.filter(
+        value => value < 2
+      ).length;
+
+
+    const high20 =
+      last20.filter(
+        value => value >= 2
+      ).length;
+
+
+    let trend =
+      "Estável";
+
+
+    if (last5.length >= 3) {
+
+      const first =
+        last5[0];
+
+      const last =
+        last5[last5.length - 1];
+
+
+      if (last > first * 1.2) {
+
+        trend = "Em alta";
+
+      } else if (last < first * 0.8) {
+
+        trend = "Em baixa";
+      }
+    }
+
+
+    let trendClass =
+      "neutral";
+
+
+    if (trend === "Em alta") {
+      trendClass = "success";
+    }
+
+    if (trend === "Em baixa") {
+      trendClass = "danger";
+    }
+
+
+    analysis.innerHTML = `
+
+      <div>
+        📊 Média 5:
+        <strong>${average5.toFixed(2)}x</strong>
+      </div>
+
+      <div>
+        📊 Média 10:
+        <strong>${average10.toFixed(2)}x</strong>
+      </div>
+
+      <div>
+        📊 Média 20:
+        <strong>${average20.toFixed(2)}x</strong>
+      </div>
+
+      <div>
+        🔥 Maior:
+        <strong>${Math.max(...multipliers).toFixed(2)}x</strong>
+      </div>
+
+      <div>
+        🔻 Abaixo de 2x:
+        <strong>${low20}</strong>
+      </div>
+
+      <div>
+        🚀 2x ou mais:
+        <strong>${high20}</strong>
+      </div>
+
+      <div>
+        📈 Tendência:
+        <strong class="${trendClass}">
+          ${trend}
+        </strong>
+      </div>
+
+    `;
+  }
+
+
+  // ==========================================
+  // DISTRIBUIÇÃO
+  // ==========================================
+
+  function updateDistribution() {
+
+    let veryLow = 0;
+    let low = 0;
+    let medium = 0;
+    let high = 0;
+
+
+    multipliers.forEach(value => {
+
+      if (value >= 1 && value < 1.5) {
+
+        veryLow++;
+
+      } else if (value >= 1.5 && value < 2) {
+
+        low++;
+
+      } else if (value >= 2 && value < 5) {
+
+        medium++;
+
+      } else if (value >= 5) {
+
+        high++;
+      }
+
+    });
+
+
+    document.getElementById("rangeVeryLow").textContent =
+      veryLow;
+
+    document.getElementById("rangeLow").textContent =
+      low;
+
+    document.getElementById("rangeMedium").textContent =
+      medium;
+
+    document.getElementById("rangeHigh").textContent =
+      high;
+  }
+
+
+  // ==========================================
+  // SEQUÊNCIAS
+  // ==========================================
+
+  function updateStreaks() {
+
+    let currentLow = 0;
+    let currentHigh = 0;
+
+    let maxLow = 0;
+    let maxHigh = 0;
+
+
+    let lowRun = 0;
+    let highRun = 0;
+
+
+    for (const value of multipliers) {
+
+      if (value < 2) {
+
+        lowRun++;
+        highRun = 0;
+
+      } else {
+
+        highRun++;
+        lowRun = 0;
+      }
+
+
+      maxLow =
+        Math.max(maxLow, lowRun);
+
+      maxHigh =
+        Math.max(maxHigh, highRun);
+    }
+
+
+    for (
+      let i = multipliers.length - 1;
+      i >= 0;
+      i--
+    ) {
+
+      if (multipliers[i] < 2) {
+
+        currentLow++;
+
+      } else {
+
+        break;
+      }
+    }
+
+
+    for (
+      let i = multipliers.length - 1;
+      i >= 0;
+      i--
+    ) {
+
+      if (multipliers[i] >= 2) {
+
+        currentHigh++;
+
+      } else {
+
+        break;
+      }
+    }
+
+
+    document.getElementById("currentLowStreak").textContent =
+      currentLow;
+
+    document.getElementById("currentHighStreak").textContent =
+      currentHigh;
+
+    document.getElementById("maxLowStreak").textContent =
+      maxLow;
+
+    document.getElementById("maxHighStreak").textContent =
+      maxHigh;
+  }
+
+
+  // ==========================================
+  // JANELAS
+  // ==========================================
+
+  function updateWindows() {
+
+    document.getElementById("window5").textContent =
+      getAverage(getWindow(5)).toFixed(2) + "x";
+
+
+    document.getElementById("window10").textContent =
+      getAverage(getWindow(10)).toFixed(2) + "x";
+
+
+    document.getElementById("window20").textContent =
+      getAverage(getWindow(20)).toFixed(2) + "x";
+
+
+    document.getElementById("window50").textContent =
+      getAverage(getWindow(50)).toFixed(2) + "x";
+  }
+
+
+  // ==========================================
+  // VOLATILIDADE
+  // ==========================================
+
+  function updateVolatility() {
+
+    const values =
+      getWindow(20);
+
+
+    if (values.length < 2) {
+
+      document.getElementById("volatility").textContent =
+        "0.00";
+
+      document.getElementById("volatilityStatus").textContent =
+        "Poucos dados";
+
+      return;
+    }
+
+
+    const average =
+      getAverage(values);
+
+
+    const variance =
+      values.reduce(
+        (sum, value) =>
+          sum + Math.pow(value - average, 2),
+        0
+      ) / values.length;
+
+
+    const standardDeviation =
+      Math.sqrt(variance);
+
+
+    document.getElementById("volatility").textContent =
+      standardDeviation.toFixed(2);
+
+
+    let status =
+      "Moderada";
+
+
+    if (standardDeviation < 1) {
+
+      status = "Baixa";
+
+    } else if (standardDeviation >= 3) {
+
+      status = "Alta";
+    }
+
+
+    document.getElementById("volatilityStatus").textContent =
+      status;
+  }
+
+
+  // ==========================================
+  // HISTÓRICO
+  // ==========================================
+
+  function updateHistory() {
 
     const history =
       document.getElementById("history");
@@ -446,10 +1048,14 @@
         const item =
           document.createElement("div");
 
-        item.className = "result";
+
+        item.className =
+          "result";
+
 
         item.textContent =
           value.toFixed(2) + "x";
+
 
         history.appendChild(item);
 
@@ -458,116 +1064,123 @@
 
 
   // ==========================================
-  // ANÁLISE DAS ÚLTIMAS 5
+  // GRÁFICO
   // ==========================================
 
-  function updateAnalysis() {
+  function updateChart() {
 
-  const analysis = document.getElementById("analysis");
+    const canvas =
+      document.getElementById("roundsChart");
 
-  if (multipliers.length === 0) {
-    analysis.textContent = "Aguardando resultados...";
-    return;
-  }
 
-  const last5 = multipliers.slice(-5);
-  const last10 = multipliers.slice(-10);
-  const last20 = multipliers.slice(-20);
-
-  const average = values =>
-    values.reduce((sum, value) => sum + value, 0) / values.length;
-
-  const low = values =>
-    values.filter(value => value < 2).length;
-
-  const high = values =>
-    values.filter(value => value >= 2).length;
-
-  let trend = "Estável";
-
-  if (last5.length >= 3) {
-    const first = last5[0];
-    const last = last5[last5.length - 1];
-
-    if (last > first * 1.2) {
-      trend = "Em alta";
-    } else if (last < first * 0.8) {
-      trend = "Em baixa";
+    if (!canvas || typeof Chart === "undefined") {
+      return;
     }
-  }
 
-  analysis.innerHTML = `
-    <div style="font-size:16px; line-height:1.8;">
-      📊 Média 5: <strong>${average(last5).toFixed(2)}x</strong><br>
-      📊 Média 10: <strong>${average(last10).toFixed(2)}x</strong><br>
-      📊 Média 20: <strong>${average(last20).toFixed(2)}x</strong><br>
-      🔥 Maior: <strong>${Math.max(...multipliers).toFixed(2)}x</strong><br>
-      🔻 Abaixo de 2x: <strong>${low(last20)}</strong><br>
-      🚀 2x ou mais: <strong>${high(last20)}</strong><br>
-      📈 Tendência: <strong>${trend}</strong>
-    </div>
-  `;
-}
 
-// ==========================================
-// GRÁFICO DAS RODADAS
-// ==========================================
+    const labels =
+      multipliers.map(
+        (value, index) =>
+          "R" + (index + 1)
+      );
 
-let roundsChart;
 
-function updateChart() {
+    if (roundsChart) {
+      roundsChart.destroy();
+    }
 
-  const canvas = document.getElementById("roundsChart");
 
-  if (!canvas) return;
+    roundsChart =
+      new Chart(canvas, {
 
-  const labels = multipliers.map(
-    value => value.toFixed(2) + "x"
-  );
+        type: "line",
 
-  if (roundsChart) {
-    roundsChart.destroy();
-  }
+        data: {
 
-  roundsChart = new Chart(canvas, {
-    type: "line",
+          labels: labels,
 
-    data: {
-      labels: labels,
+          datasets: [{
 
-      datasets: [{
-        label: "Multiplicador",
-        data: multipliers,
+            label: "Multiplicador",
 
-        borderWidth: 2,
-        tension: 0.3,
+            data: multipliers,
 
-        pointRadius: 4
-      }]
-    },
+            borderWidth: 2,
 
-    options: {
-      responsive: true,
+            tension: 0.3,
 
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: "Multiplicador (x)"
-          }
+            pointRadius: 4,
+
+            pointHoverRadius: 7
+
+          }]
+
         },
 
-        x: {
-          title: {
-            display: true,
-            text: "Rodadas"
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          plugins: {
+
+            tooltip: {
+
+              callbacks: {
+
+                label: function(context) {
+
+                  return (
+                    " " +
+                    Number(context.raw).toFixed(2) +
+                    "x"
+                  );
+
+                }
+
+              }
+
+            }
+
+          },
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              title: {
+
+                display: true,
+
+                text: "Multiplicador (x)"
+
+              }
+
+            },
+
+            x: {
+
+              title: {
+
+                display: true,
+
+                text: "Rodadas"
+
+              }
+
+            }
+
           }
+
         }
-      }
-    }
-  });
-}
+
+      });
+  }
+
+
   // ==========================================
   // INICIAR
   // ==========================================
