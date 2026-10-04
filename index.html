@@ -475,7 +475,65 @@
   `;
 }
 
+// ==========================================
+// GRÁFICO DAS RODADAS
+// ==========================================
 
+let roundsChart;
+
+function updateChart() {
+
+  const canvas = document.getElementById("roundsChart");
+
+  if (!canvas) return;
+
+  const labels = multipliers.map(
+    (_, index) => "Rodada " + (index + 1)
+  );
+
+  if (roundsChart) {
+    roundsChart.destroy();
+  }
+
+  roundsChart = new Chart(canvas, {
+    type: "line",
+
+    data: {
+      labels: labels,
+
+      datasets: [{
+        label: "Multiplicador",
+        data: multipliers,
+
+        borderWidth: 2,
+        tension: 0.3,
+
+        pointRadius: 4
+      }]
+    },
+
+    options: {
+      responsive: true,
+
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Multiplicador (x)"
+          }
+        },
+
+        x: {
+          title: {
+            display: true,
+            text: "Rodadas"
+          }
+        }
+      }
+    }
+  });
+}
   // ==========================================
   // INICIAR
   // ==========================================
