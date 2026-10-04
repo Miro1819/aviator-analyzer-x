@@ -424,33 +424,36 @@
 
   function updateAnalysis() {
 
-    if (multipliers.length < 5) {
+  const analysis = document.getElementById("analysis");
 
-      document.getElementById("analysis").textContent =
-        "Adicione pelo menos 5 rodadas.";
-
-      return;
-    }
-
-
-    const lastFive =
-      multipliers.slice(-5);
-
-
-    const total =
-      lastFive.reduce(
-        (sum, value) => sum + value,
-        0
-      );
-
-
-    const average =
-      total / lastFive.length;
-
-
-    document.getElementById("analysis").textContent =
-      average.toFixed(2) + "x";
+  if (multipliers.length === 0) {
+    analysis.textContent = "Aguardando resultados...";
+    return;
   }
+
+  const last5 = multipliers.slice(-5);
+  const last10 = multipliers.slice(-10);
+  const last20 = multipliers.slice(-20);
+
+  const average = values =>
+    values.reduce((sum, value) => sum + value, 0) / values.length;
+
+  const low = values =>
+    values.filter(value => value < 2).length;
+
+  const high = values =>
+    values.filter(value => value >= 2).length;
+
+  analysis.innerHTML = `
+    <div style="font-size:16px; line-height:1.8;">
+      📊 Média 5: <strong>${average(last5).toFixed(2)}x</strong><br>
+      📊 Média 10: <strong>${average(last10).toFixed(2)}x</strong><br>
+      📊 Média 20: <strong>${average(last20).toFixed(2)}x</strong><br>
+      🔻 Abaixo de 2x: <strong>${low(last20)}</strong><br>
+      🚀 2x ou mais: <strong>${high(last20)}</strong>
+    </div>
+  `;
+}
 
 
   // ==========================================
