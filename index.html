@@ -444,13 +444,28 @@
   const high = values =>
     values.filter(value => value >= 2).length;
 
+  let trend = "Estável";
+
+  if (last5.length >= 3) {
+    const first = last5[0];
+    const last = last5[last5.length - 1];
+
+    if (last > first * 1.2) {
+      trend = "Em alta";
+    } else if (last < first * 0.8) {
+      trend = "Em baixa";
+    }
+  }
+
   analysis.innerHTML = `
     <div style="font-size:16px; line-height:1.8;">
       📊 Média 5: <strong>${average(last5).toFixed(2)}x</strong><br>
       📊 Média 10: <strong>${average(last10).toFixed(2)}x</strong><br>
       📊 Média 20: <strong>${average(last20).toFixed(2)}x</strong><br>
+      🔥 Maior: <strong>${Math.max(...multipliers).toFixed(2)}x</strong><br>
       🔻 Abaixo de 2x: <strong>${low(last20)}</strong><br>
-      🚀 2x ou mais: <strong>${high(last20)}</strong>
+      🚀 2x ou mais: <strong>${high(last20)}</strong><br>
+      📈 Tendência: <strong>${trend}</strong>
     </div>
   `;
 }
