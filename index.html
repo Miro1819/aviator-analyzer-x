@@ -1090,110 +1090,89 @@ roundInput.value = "";
   // ==========================================
   // GRÁFICO
   // ==========================================
+function updateChart() {
 
-  function updateChart() {
+  const canvas = document.getElementById("roundsChart");
 
-    const canvas =
-      document.getElementById("roundsChart");
+  if (!canvas || typeof Chart === "undefined") {
+    return;
+  }
 
+  if (roundsChart) {
+    roundsChart.destroy();
+  }
 
-    if (!canvas || typeof Chart === "undefined") {
-      return;
-    }
+  const labels = multipliers.map((value, index) => {
+    return "R" + (index + 1);
+  });
 
+  roundsChart = new Chart(canvas, {
 
-    const labels =
-      multipliers.map(
-        (value, index) =>
-          "R" + (index + 1)
-      );
+    type: "line",
 
+    data: {
+      labels: labels,
 
-    if (roundsChart) {
-      roundsChart.destroy();
-    }
+      datasets: [{
+        label: "Multiplicador",
 
+        data: multipliers,
 
-    roundsChart =
-      new Chart(canvas, {
+        borderWidth: 3,
 
-        type: "line",
+        tension: 0.3,
 
-        data: {
+        pointRadius: 4,
 
-          labels: labels,
+        pointHoverRadius: 7,
 
-          datasets: [{
+        fill: false
+      }]
+    },
 
-            label: "Multiplicador",
+    options: {
 
-            data: multipliers,
+      responsive: true,
 
-            borderWidth: 2,
+      maintainAspectRatio: false,
 
-            tension: 0.3,
+      animation: false,
 
-            pointRadius: 4,
+      scales: {
 
-            pointHoverRadius: 7
+        y: {
+          beginAtZero: true,
 
-          }]
-
+          title: {
+            display: true,
+            text: "Multiplicador (x)"
+          }
         },
 
-        options: {
+        x: {
+          title: {
+            display: true,
+            text: "Rodadas"
+          }
+        }
 
-          responsive: true,
+      },
 
-          maintainAspectRatio: false,
+      plugins: {
 
-          plugins: {
+        legend: {
+          display: true
+        },
 
-            tooltip: {
+        tooltip: {
 
-              callbacks: {
+          callbacks: {
 
-                label: function(context) {
+            label: function(context) {
 
-                  return (
-                    " " +
-                    Number(context.raw).toFixed(2) +
-                    "x"
-                  );
-
-                }
-
-              }
-
-            }
-
-          },
-
-          scales: {
-
-            y: {
-
-              beginAtZero: true,
-
-              title: {
-
-                display: true,
-
-                text: "Multiplicador (x)"
-
-              }
-
-            },
-
-            x: {
-
-              title: {
-
-                display: true,
-
-                text: "Rodadas"
-
-              }
+              return " " +
+                Number(context.raw).toFixed(2) +
+                "x";
 
             }
 
@@ -1201,10 +1180,13 @@ roundInput.value = "";
 
         }
 
-      });
-  }
+      }
 
+    }
 
+  });
+
+}
   // ==========================================
   // INICIAR
   // ==========================================
