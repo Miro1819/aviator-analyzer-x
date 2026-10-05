@@ -527,12 +527,14 @@ let roundNumbers = [];
       return;
     }
 
+const reversedData = data.reverse();
 
-    multipliers =
-      (data || [])
-        .reverse()
-        .map(item => Number(item.multiplier))
-        .filter(value => Number.isFinite(value));
+roundNumbers = reversedData.map(
+  item => Number(item.round_number)
+);
+    multipliers = reversedData.map(
+  item => Number(item.multiplier)
+);
 
 
     updatePanel();
