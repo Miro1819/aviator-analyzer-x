@@ -638,70 +638,109 @@ roundInput.value = "";
   // ATUALIZAR PAINEL
   // ==========================================
 
-  function updatePanel() {
+  async function addRound() {
 
-    const rounds =
-      multipliers.length;
+  const input =
+    document.getElementById("multiplier");
 
+  const roundInput =
+    document.getElementById("roundNumber");
 
-    document.getElementById("rounds").textContent =
-      rounds;
+  const button =
+    document.getElementById("addButton");
 
-
-    if (rounds === 0) {
-
-      document.getElementById("average").textContent =
-        "0.00x";
-
-      document.getElementById("highest").textContent =
-        "0.00x";
-
-      document.getElementById("analysis").textContent =
-        "Aguardando resultados...";
-
-      document.getElementById("history").innerHTML =
-        "";
-
-      updateDistribution();
-      updateStreaks();
-      updateWindows();
-      updateVolatility();
-      updateChart();
-
-      return;
-    }
+  const message =
+    document.getElementById("message");
 
 
-    const average =
-      getAverage(multipliers);
+  const value =
+    Number(input.value);
+
+  const roundNumber =
+    Number(roundInput.value);
 
 
-    const highest =
-      Math.max(...multipliers);
+  if (!roundNumber || roundNumber < 1) {
 
+    message.textContent =
+      "Digite o número da rodada.";
 
-    document.getElementById("average").textContent =
-      average.toFixed(2) + "x";
-
-
-    document.getElementById("highest").textContent =
-      highest.toFixed(2) + "x";
-
-
-    updateAnalysis();
-
-    updateDistribution();
-
-    updateStreaks();
-
-    updateWindows();
-
-    updateVolatility();
-
-    updateChart();
-
-    updateHistory();
+    return;
   }
+
+
+  if (!value || value < 1) {
+
+    message.textContent =
+      "Digite um multiplicador válido. Ex.: 2.50";
+
+    return;
+  }
+
+
+  button.disabled = true;
+
+  message.textContent =
+    "Salvando...";
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("aviator_rounds")
+      .insert({
+        round_number: roundNumber,
+        multiplier: value
+      })
+      .select()
+      .single();
+
+
+  if (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Não foi possível salvar o resultado.";
+
+    button.disabled = false;
+
+    return;
+  }
+
+
+  multipliers.push(
+    Number(data.multiplier)
+  );
+
+  roundNumbers.push(
+    Number(data.round_number)
+  );
+
+
+  if (multipliers.length > 100) {
+
+    multipliers.shift();
+
+    roundNumbers.shift();
+
+  }
+
+
+  input.value = "";
+
+  roundInput.value = "";
+
+
+  message.textContent =
+    "Resultado salvo com sucesso!";
+
+
+  updatePanel();
+
+
+  button.disabled = false;
+
+}
 
 
   // ==========================================
