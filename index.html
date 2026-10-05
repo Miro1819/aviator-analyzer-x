@@ -1068,9 +1068,12 @@ roundInput.value = "";
 
 
     multipliers
-      .slice()
-      .reverse()
-      .forEach(value => {
+  .map((value, index) => ({
+    value: value,
+    round: roundNumbers[index]
+  }))
+  .reverse()
+  .forEach(itemData => {
 
         const item =
           document.createElement("div");
@@ -1081,7 +1084,11 @@ roundInput.value = "";
 
 
         item.textContent =
-          value.toFixed(2) + "x";
+  "Rodada " +
+  itemData.round +
+  " — " +
+  itemData.value.toFixed(2) +
+  "x";
 
 
         history.appendChild(item);
